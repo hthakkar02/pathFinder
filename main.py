@@ -3,6 +3,7 @@ import a_star
 
 WIDTH = 800
 
+
 def main(WIDTH):
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, WIDTH))
@@ -13,42 +14,69 @@ def main(WIDTH):
     button_light = (170, 170, 170)
     button_dark = (100, 100, 100)
 
-    font = pygame.font.SysFont('Corbel', 35)
-    text = font.render("A Star Algorithm", True, text_color)
-    button1_w = ((text.get_width() // 10) + 5) * 10
-    button1_h = ((text.get_height() // 10) + 2) * 10
+    font = pygame.font.SysFont('Corbel', 100)
+    title1 = font.render("Path Finding", True, text_color)
+    title2 = font.render("Algorithms", True, text_color)
 
+    font = pygame.font.SysFont('Corbel', 60)
+    # Buttons
+    a_star_button = font.render("A Star Algorithm", True, text_color)
+    dijkstras = font.render("Dijkstras Algorithm", True, text_color)
+    buttons = [a_star_button, dijkstras]
+
+    button_info = dict()
+    for num in range(len(buttons)):
+        button_info[num] = {"button": buttons[num], "button_width": 450,
+                            "button_height": ((buttons[num].get_height() // 10) + 2) * 10}
+    # "button_width": ((buttons[num].get_width() // 10) + 5) * 10
     run = True
     choice = None
     while run:
         mouse = pygame.mouse.get_pos()
+        curr_x = 25
+        curr_y = 400
+        # Sets up the x and y position for each button
+        for key in button_info:
+            button_info[key]["button_x"] = curr_x
+            button_info[key]["button_y"] = curr_y
+            curr_y = curr_y + 25 + button_info[key]["button_height"]
         for ev in pygame.event.get():
-
             if ev.type == pygame.QUIT:
                 run = False
-
-            # checks if a mouse is clicked
             if ev.type == pygame.MOUSEBUTTONDOWN:
-                if WIDTH / 2 <= mouse[0] <= WIDTH / 2 + button1_w and WIDTH / 2 <= mouse[1] <= WIDTH / 2 + button1_h:
-                    run = False
-                    choice = "a_star"
-
-        # if mouse is hovered on a button it
-        # changes to lighter shade
+                # Checks the button click
+                for key in button_info:
+                    if button_info[key]["button_x"] <= mouse[0] <= button_info[key]["button_x"] + \
+                            button_info[key]["button_width"] \
+                            and button_info[key]["button_y"] <= mouse[1] <= button_info[key]["button_y"] + \
+                            button_info[key]["button_height"]:
+                        run = False
+                        choice = key
         screen.fill(light_blue)
-        if WIDTH / 2 <= mouse[0] <= WIDTH / 2 + button1_w and WIDTH / 2 <= mouse[1] <= WIDTH / 2 + button1_h:
-            pygame.draw.rect(screen, button_light, [WIDTH / 2, WIDTH / 2, button1_w, button1_h])
-
-        else:
-            pygame.draw.rect(screen, button_dark, [WIDTH / 2, WIDTH / 2, button1_w, button1_h])
-
-        # superimposing the text onto our button
-        screen.blit(text, (WIDTH / 2 + 25, WIDTH / 2 + 8))
-
+        screen.blit(title1, ((WIDTH-title1.get_width())/2, 100))
+        screen.blit(title2, ((WIDTH-title2.get_width())/2, 200))
+        # Changes the color of the button if mouse is hovering over it
+        for key in button_info:
+            if button_info[key]["button_x"] <= mouse[0] <= button_info[key]["button_x"] + \
+                    button_info[key]["button_width"] \
+                    and button_info[key]["button_y"] <= mouse[1] <= button_info[key]["button_y"] + \
+                    button_info[key]["button_height"]:
+                pygame.draw.rect(screen, button_light, [button_info[key]["button_x"], button_info[key]["button_y"],
+                                                        button_info[key]["button_width"],
+                                                        button_info[key]["button_height"]])
+            else:
+                pygame.draw.rect(screen, button_dark, [button_info[key]["button_x"], button_info[key]["button_y"],
+                                                       button_info[key]["button_width"],
+                                                       button_info[key]["button_height"]])
+            screen.blit(button_info[key]["button"], (button_info[key]["button_x"] + (button_info[key]["button_width"] -
+                                                                                     buttons[key].get_width()) / 2,
+                                                     button_info[key]["button_y"] + 8))
         # updates the frames of the game
         pygame.display.update()
-    if choice == "a_star":
+    if choice == 0:
         a_star.main(screen, WIDTH)
+    elif choice == 1:
+        print("D")
     pygame.quit()
 
 
